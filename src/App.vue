@@ -1,11 +1,17 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">
+  <!-- Admin routes: no wrapper layout -->
+  <div v-if="isAdminRoute">
+    <router-view />
+  </div>
+
+  <!-- Public routes: with header & footer -->
+  <div v-else class="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">
     <!-- Header/Navigation -->
     <header class="bg-white shadow-sm sticky top-0 z-10">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 items-center">
           <div class="flex items-center cursor-pointer" @click="$router.push('/')">
-            <div class="h-8 w-8 rounded-md bg-riasec-r flex items-center justify-center text-white font-bold text-xl mr-2 shadow-md">A</div>
+            <div class="h-8 w-8 rounded-md bg-blue-600 flex items-center justify-center text-white font-bold text-xl mr-2 shadow-md">A</div>
             <span class="font-bold text-xl tracking-tight text-gray-800">ARAH</span>
           </div>
           <div class="flex items-center space-x-4">
@@ -17,14 +23,6 @@
 
     <!-- Main Content -->
     <main class="flex-grow max-w-4xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col justify-center">
-      <!-- Todos Example List -->
-      <div v-if="todos.length" class="mb-8 p-4 bg-white rounded-lg shadow">
-        <h2 class="text-xl font-bold mb-4">Todos (Supabase Test)</h2>
-        <ul class="list-disc pl-5">
-          <li v-for="todo in todos" :key="todo.id" class="mb-2">{{ todo.name }}</li>
-        </ul>
-      </div>
-
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" />
@@ -44,21 +42,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { supabase } from './utils/supabase'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 
-const todos = ref([])
-
-async function getTodos() {
-  const { data } = await supabase.from('todos').select()
-  if (data) {
-    todos.value = data
-  }
-}
-
-onMounted(() => {
-  getTodos()
-})
+const route = useRoute()
+const isAdminRoute = computed(() => route.path.startsWith('/admin'))
 // Main layout component
 </script>
 

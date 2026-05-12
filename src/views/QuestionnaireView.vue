@@ -1,25 +1,25 @@
 <template>
   <div class="bg-white rounded-2xl shadow-xl overflow-hidden max-w-4xl mx-auto">
     <!-- Header with Progress -->
-    <div class="bg-riasec-a px-6 py-8 md:px-10">
+    <div class="bg-blue-600 px-6 py-8 md:px-10">
       <div class="flex items-center justify-between mb-6">
         <div>
           <h2 class="text-2xl md:text-3xl font-bold text-white mb-1">
             {{ currentSlide === 1 ? 'Kuesioner Bagian 1' : (currentSlide === 2 ? 'Kuesioner Bagian 2' : 'Validasi Hasil') }}
           </h2>
-          <p class="text-purple-100">
+          <p class="text-blue-100">
             {{ currentSlide <= 2 ? 'Pilih jawaban yang paling sesuai dengan diri Anda' : 'Pilih profil yang paling menggambarkan Anda' }}
           </p>
         </div>
         <div class="hidden sm:block">
-          <span class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-white text-riasec-a font-bold text-xl shadow-sm">
+          <span class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-white text-blue-600 font-bold text-xl shadow-sm">
             {{ currentSlide + 1 }}/4
           </span>
         </div>
       </div>
       
       <!-- Progress Bar -->
-      <div class="w-full bg-purple-900 bg-opacity-30 rounded-full h-2.5">
+      <div class="w-full bg-blue-900 bg-opacity-30 rounded-full h-2.5">
         <div class="bg-white h-2.5 rounded-full transition-all duration-500 ease-in-out" :style="{ width: progressPercentage + '%' }"></div>
       </div>
     </div>
@@ -34,21 +34,21 @@
             
             <!-- Attention Check -->
             <div v-if="q.id === 'ATTENTION'" class="grid grid-cols-2 gap-4">
-              <label class="flex items-center justify-center p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors text-center" :class="{'bg-purple-50 border-purple-300 ring-2 ring-riasec-a': answers[q.id] === 'Ya'}">
+              <label class="flex items-center justify-center p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors text-center" :class="{'bg-blue-50 border-blue-300 ring-2 ring-blue-500': answers[q.id] === 'Ya'}">
                 <input type="radio" v-model="answers[q.id]" value="Ya" class="sr-only" required>
                 <span class="font-medium text-gray-700">Ya</span>
               </label>
-              <label class="flex items-center justify-center p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors text-center" :class="{'bg-purple-50 border-purple-300 ring-2 ring-riasec-a': answers[q.id] === 'Tidak'}">
+              <label class="flex items-center justify-center p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors text-center" :class="{'bg-blue-50 border-blue-300 ring-2 ring-blue-500': answers[q.id] === 'Tidak'}">
                 <input type="radio" v-model="answers[q.id]" value="Tidak" class="sr-only" required>
                 <span class="font-medium text-gray-700">Tidak</span>
               </label>
             </div>
             
             <!-- Normal Likert Scale -->
-            <div v-else class="grid grid-cols-1 sm:grid-cols-5 gap-3">
+            <div v-else class="grid grid-cols-1 sm:grid-cols-4 gap-3">
               <label v-for="opt in likertOptions" :key="opt.value" 
                 class="flex flex-col items-center justify-center p-3 sm:p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-all text-center h-full"
-                :class="{'bg-purple-50 border-purple-300 ring-2 ring-riasec-a shadow-sm': answers[q.id] === opt.value}">
+                :class="{'bg-blue-50 border-blue-300 ring-2 ring-blue-500 shadow-sm': answers[q.id] === opt.value}">
                 <input type="radio" v-model="answers[q.id]" :value="opt.value" class="sr-only" required>
                 <span class="text-sm font-medium text-gray-700">{{ opt.label }}</span>
               </label>
@@ -61,10 +61,10 @@
           <div v-for="(q, index) in slide2Questions" :key="q.id" class="border-b border-gray-100 pb-8 last:border-0 last:pb-0">
             <h3 class="text-lg font-medium text-gray-900 mb-4">{{ index + 13 }}. {{ q.text }}</h3>
             
-            <div class="grid grid-cols-1 sm:grid-cols-5 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
               <label v-for="opt in likertOptions" :key="opt.value" 
                 class="flex flex-col items-center justify-center p-3 sm:p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-all text-center h-full"
-                :class="{'bg-purple-50 border-purple-300 ring-2 ring-riasec-a shadow-sm': answers[q.id] === opt.value}">
+                :class="{'bg-blue-50 border-blue-300 ring-2 ring-blue-500 shadow-sm': answers[q.id] === opt.value}">
                 <input type="radio" v-model="answers[q.id]" :value="opt.value" class="sr-only" required>
                 <span class="text-sm font-medium text-gray-700">{{ opt.label }}</span>
               </label>
@@ -75,7 +75,7 @@
         <!-- Slide 3 (Validation) -->
         <div v-show="currentSlide === 3" class="space-y-8">
           <div v-if="isCalculating" class="flex flex-col items-center justify-center py-12">
-            <svg class="animate-spin h-12 w-12 text-riasec-a mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <svg class="animate-spin h-12 w-12 text-blue-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
@@ -137,7 +137,7 @@
           <button 
             type="button"
             @click="prevSlide"
-            class="px-6 py-3 border border-gray-300 text-base font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-riasec-a transition-colors"
+            class="px-6 py-3 border border-gray-300 text-base font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
             :class="{'invisible': currentSlide === 1}"
           >
             Kembali
@@ -146,7 +146,7 @@
           <button 
             type="submit"
             :disabled="isSubmitting"
-            class="px-8 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-riasec-a hover:bg-purple-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-riasec-a transform transition-all hover:-translate-y-0.5 flex items-center disabled:opacity-70 disabled:cursor-not-allowed"
+            class="px-8 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform transition-all hover:-translate-y-0.5 flex items-center disabled:opacity-70 disabled:cursor-not-allowed"
           >
             <svg v-if="isSubmitting" class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -203,8 +203,7 @@ const likertOptions = [
   { label: 'Sangat Setuju', value: 4 },
   { label: 'Setuju', value: 3 },
   { label: 'Tidak Setuju', value: 2 },
-  { label: 'Sangat Tidak Setuju', value: 1 },
-  { label: 'Kurang Paham', value: 0 }
+  { label: 'Sangat Tidak Setuju', value: 1 }
 ];
 
 const dimensionNames = {
