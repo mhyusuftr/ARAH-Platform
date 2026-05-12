@@ -17,6 +17,14 @@
 
     <!-- Main Content -->
     <main class="flex-grow max-w-4xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col justify-center">
+      <!-- Todos Example List -->
+      <div v-if="todos.length" class="mb-8 p-4 bg-white rounded-lg shadow">
+        <h2 class="text-xl font-bold mb-4">Todos (Supabase Test)</h2>
+        <ul class="list-disc pl-5">
+          <li v-for="todo in todos" :key="todo.id" class="mb-2">{{ todo.name }}</li>
+        </ul>
+      </div>
+
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" />
@@ -36,6 +44,21 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
+import { supabase } from './utils/supabase'
+
+const todos = ref([])
+
+async function getTodos() {
+  const { data } = await supabase.from('todos').select()
+  if (data) {
+    todos.value = data
+  }
+}
+
+onMounted(() => {
+  getTodos()
+})
 // Main layout component
 </script>
 

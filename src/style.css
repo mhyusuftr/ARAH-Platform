@@ -1,6 +1,13 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-riasec-r: #3B82F6; /* Blue */
+  --color-riasec-i: #10B981; /* Green */
+  --color-riasec-a: #8B5CF6; /* Purple */
+  --color-riasec-s: #F59E0B; /* Yellow */
+  --color-riasec-e: #EF4444; /* Red */
+  --color-riasec-c: #374151; /* Gray */
+}
 
 @layer base {
   body {
