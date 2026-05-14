@@ -114,7 +114,10 @@
                 <div class="flex space-x-1">
                   <span v-for="dim in client.top3" :key="dim" class="px-2 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">{{ dim }}</span>
                 </div>
-                <button @click="showDetail(client)" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Detail</button>
+                <div class="flex space-x-3">
+                  <button @click="showDetail(client)" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Detail</button>
+                  <button @click="deleteClient(client)" class="text-red-600 hover:text-red-800 text-sm font-medium">Hapus</button>
+                </div>
               </div>
             </div>
             <div v-if="filteredClients.length === 0" class="p-8 text-center text-gray-500">Belum ada data klien</div>
@@ -158,7 +161,8 @@
                     <span :class="client.hasAssessment ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'" class="px-2 text-xs font-semibold rounded-full leading-5">{{ client.hasAssessment ? 'Selesai' : 'Biodata Saja' }}</span>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-                    <button @click="showDetail(client)" class="text-blue-600 hover:text-blue-900 font-medium">Lihat Detail</button>
+                    <button @click="showDetail(client)" class="text-blue-600 hover:text-blue-900 font-medium mr-4">Lihat Detail</button>
+                    <button @click="deleteClient(client)" class="text-red-600 hover:text-red-900 font-medium">Hapus</button>
                   </td>
                 </tr>
                 <tr v-if="filteredClients.length === 0">
@@ -374,6 +378,33 @@ const showDetail = async (client) => {
     };
   } catch (error) {
     console.error('Error fetching detail:', error);
+  }
+};
+
+const deleteClient = async (client) => {
+  if (!confirm(`Apakah Anda yakin ingin menghapus data klien "${client.nama}"?`)) {
+    return;
+  }
+  
+  const token = localStorage.getItem('adminToken');
+  try {
+    await axios.delete(`${API_URL}/admin/clients/${client.id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    // Remove from the list
+    clients.value = clients.value.filter(c => c.id !== client.id);
+    
+    // Update stats
+    stats.value.totalClients--;
+    if (client.hasAssessment) {
+      stats.value.completedAssessments--;
+    }
+    
+    alert('Data klien berhasil dihapus.');
+  } catch (error) {
+    console.error('Error deleting client:', error);
+    alert('Gagal menghapus data klien.');
   }
 };
 
