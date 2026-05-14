@@ -290,26 +290,13 @@ const submitAnswers = async () => {
     }
     
     const payload = {
-      clientId: store.clientId || 'test_id', // Handle missing ID for testing
+      clientId: store.clientId,
       answers: cleanedAnswers,
       attentionCheck: answers['ATTENTION']
     };
     
-    // In dev mode without backend, mock the response
-    if (!store.clientId) {
-      setTimeout(() => {
-        scoringData.value = {
-          assessmentId: 'mock_id',
-          top3: ['R', 'I', 'E'],
-          bottom3: ['S', 'C', 'A'],
-          isValid: payload.attentionCheck === 'Tidak'
-        };
-        store.setResults(scoringData.value);
-        isSubmitting.value = false;
-        currentSlide.value = 3;
-        window.scrollTo(0, 0);
-      }, 1500);
-      return;
+    if (!payload.clientId) {
+      throw new Error('Sesi Anda telah berakhir. Silakan kembali ke halaman biodata.');
     }
 
     const response = await axios.post(`${API_URL}/assessment/submit`, payload);
@@ -340,9 +327,11 @@ const submitValidation = async () => {
       pekerjaanDikuasai: validationForm.pekerjaanDikuasai.split(',').map(s => s.trim()).filter(Boolean)
     };
 
-    if (store.clientId) {
-      await axios.post(`${API_URL}/assessment/validate`, payload);
+    if (!store.clientId) {
+      throw new Error('Sesi Anda telah berakhir. Silakan kembali ke halaman biodata.');
     }
+    
+    await axios.post(`${API_URL}/assessment/validate`, payload);
     
     router.push('/result');
   } catch (error) {

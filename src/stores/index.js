@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 
 export const useAssessmentStore = defineStore('assessment', {
   state: () => ({
+    clientId: null,
     clientData: null,
     answers: {},
     results: null

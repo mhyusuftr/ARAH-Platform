@@ -352,23 +352,6 @@ const showDetail = async (client) => {
   detailData.value = null;
   const token = localStorage.getItem('adminToken');
   
-  if (token === 'mock_token') {
-    detailData.value = {
-      clientInfo: { nama: client.nama, usia: client.usia, jenis_kelamin: client.jenisKelamin, pendidikan_terakhir: 'SMA/SMK', status_perkawinan: 'Belum menikah', alamat: 'Jakarta', dukungan_keluarga: true, tanggungan: false },
-      answers: { Q1:4,Q2:3,Q3:4,Q4:3,Q5:3,Q6:4,Q7:3,Q8:4,Q9:2,Q10:1,Q11:3,Q12:2,Q13:4,Q14:3,Q15:4,Q16:3,Q17:3,Q18:4,Q19:3,Q20:4,Q21:2,Q22:3,Q23:2,Q24:3 },
-      attention_check_passed: client.isValid,
-      raw_scores: { R:14, I:14, A:8, S:14, E:14, C:10 },
-      normalized_scores: { R:83, I:83, A:33, S:83, E:83, C:50 },
-      categories: { R:'Tinggi', I:'Tinggi', A:'Rendah', S:'Tinggi', E:'Tinggi', C:'Sedang' },
-      top3: client.top3 || ['R','I','E'],
-      bottom3: ['A','C','S'],
-      persepsi_sesuai: client.top3?.[0] || 'R',
-      persepsi_tidak_sesuai: 'A',
-      pekerjaan_disenangi: ['Teknisi','Programmer','Manajer'],
-      pekerjaan_dikuasai: ['Administrasi','Desain','Mengajar']
-    };
-    return;
-  }
 
   try {
     const res = await axios.get(`${API_URL}/admin/clients/${client.id}`, {
@@ -401,15 +384,6 @@ onMounted(async () => {
   try {
     adminInfo.value = JSON.parse(localStorage.getItem('adminInfo'));
     
-    if (token === 'mock_token') {
-      stats.value = { totalClients: 24, completedAssessments: 20 };
-      clients.value = [
-        { id: 1, nama: 'Budi Santoso', usia: 24, jenisKelamin: 'Laki-laki', date: '10 Mei 2026', top3: ['R', 'I', 'E'], isValid: true },
-        { id: 2, nama: 'Siti Aminah', usia: 19, jenisKelamin: 'Perempuan', date: '09 Mei 2026', top3: ['S', 'A', 'C'], isValid: true },
-        { id: 3, nama: 'Agus Salim', usia: 28, jenisKelamin: 'Laki-laki', date: '08 Mei 2026', top3: ['E', 'C', 'R'], isValid: false }
-      ];
-      return;
-    }
     
     const statsRes = await axios.get(`${API_URL}/admin/stats`, {
       headers: { Authorization: `Bearer ${token}` }

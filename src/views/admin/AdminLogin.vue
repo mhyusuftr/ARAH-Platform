@@ -67,13 +67,6 @@ const handleLogin = async () => {
     isLoading.value = true;
     errorMsg.value = '';
     
-    // In dev mode without backend, mock login
-    if (username.value === 'admin' && password.value === 'admin') {
-      localStorage.setItem('adminToken', 'mock_token');
-      localStorage.setItem('adminInfo', JSON.stringify({ nama: 'Admin PK', role: 'admin' }));
-      router.push('/admin/dashboard');
-      return;
-    }
 
     const response = await axios.post(`${API_URL}/admin/login`, {
       username: username.value,

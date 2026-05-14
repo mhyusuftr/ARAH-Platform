@@ -215,7 +215,12 @@ onMounted(async () => {
       // Fetch full result from backend if we have ID
       if (store.results.assessmentId && store.results.assessmentId !== 'mock_id') {
         const response = await axios.get(`${API_URL}/assessment/result/${store.results.assessmentId}`);
-        resultData.value = response.data;
+        const d = response.data;
+        resultData.value = {
+          ...d,
+          isValid: d.is_valid,
+          rankedProfile: d.ranked_profile || []
+        };
       } else {
         // Use mock data for frontend testing
         resultData.value = {
