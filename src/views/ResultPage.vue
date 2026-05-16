@@ -120,7 +120,13 @@
                 <h4 class="font-bold text-gray-900">Interpretasi Singkat</h4>
               </div>
               <p class="text-sm text-gray-700 leading-relaxed">
-                Kombinasi dominan Anda adalah <strong>{{ resultData.top3.join('') }}</strong>. Anda cenderung menyukai pekerjaan yang praktis dan nyata, namun juga memiliki ketertarikan untuk memecahkan masalah analitis, serta memiliki jiwa kepemimpinan atau kewirausahaan.
+                Kombinasi dominan Anda adalah <strong>{{ resultData.top3.join('') }}</strong>. 
+                <span v-if="resultData.rankedProfile[0]?.detail">
+                  {{ getInterpretasiSingkat(resultData.rankedProfile) }}
+                </span>
+                <span v-else>
+                  Anda cenderung menyukai pekerjaan yang praktis dan nyata, namun juga memiliki ketertarikan untuk memecahkan masalah analitis, serta memiliki jiwa kepemimpinan atau kewirausahaan.
+                </span>
               </p>
             </div>
             
@@ -133,12 +139,28 @@
                 </span>
                 <h4 class="font-bold text-gray-900">Rekomendasi Pekerjaan</h4>
               </div>
-              <ul class="text-sm text-gray-700 list-disc pl-5 space-y-1">
-                <li>Teknisi Komputer / IT Support</li>
-                <li>Analis Data Logistik</li>
-                <li>Manajer Proyek Konstruksi</li>
-                <li>Wirausaha Bidang Teknologi</li>
-              </ul>
+              
+              <div v-if="resultData.pekerjaan_disenangi?.length || resultData.pekerjaan_dikuasai?.length" class="mb-4">
+                <p class="text-sm font-semibold text-gray-800 mb-2">Berdasarkan Pilihan 3 Disenangi & 3 Dikuasai:</p>
+                <ul class="text-sm text-gray-700 list-disc pl-5 space-y-1">
+                  <li v-for="job in [...new Set([...(resultData.pekerjaan_disenangi || []), ...(resultData.pekerjaan_dikuasai || [])])].filter(Boolean)" :key="job">
+                    {{ job }}
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <p class="text-sm font-semibold text-gray-800 mb-2">Alternatif dari Profil {{ resultData.top3.join('') }}:</p>
+                <p class="text-sm text-gray-700 leading-relaxed" v-if="resultData.rankedProfile[0]?.detail">
+                  {{ getCombinedJobs(resultData.rankedProfile) }}
+                </p>
+                <ul v-else class="text-sm text-gray-700 list-disc pl-5 space-y-1">
+                  <li>Teknisi Komputer / IT Support</li>
+                  <li>Analis Data Logistik</li>
+                  <li>Manajer Proyek Konstruksi</li>
+                  <li>Wirausaha Bidang Teknologi</li>
+                </ul>
+              </div>
             </div>
             
             <div class="bg-purple-50 p-6 rounded-2xl border border-purple-100">
@@ -150,13 +172,21 @@
                 </span>
                 <h4 class="font-bold text-gray-900">Arah Pengembangan</h4>
               </div>
-              <p class="text-sm text-gray-700 leading-relaxed mb-2">
-                Fokuslah pada pengembangan keterampilan teknis yang spesifik, serta kemampuan problem-solving. Anda disarankan mengikuti:
+              
+              <p class="text-sm text-gray-700 leading-relaxed mb-3">
+                Berdasarkan minat dan kemampuan yang Anda pilih, serta profil dominan <strong>{{ resultData.top3.join('') }}</strong>, kami menyarankan Anda untuk mengembangkan keterampilan berikut:
               </p>
+
+              <div class="bg-white bg-opacity-60 p-3 rounded-lg border border-purple-200 mb-3" v-if="resultData.rankedProfile[0]?.detail">
+                <p class="text-sm text-gray-800 font-medium mb-1">Keterampilan Kunci yang Perlu Diasah:</p>
+                <p class="text-sm text-gray-700 italic">{{ getCombinedSkills(resultData.rankedProfile) }}</p>
+              </div>
+              
+              <p class="text-sm text-gray-700 leading-relaxed mb-2">Rekomendasi langkah selanjutnya:</p>
               <ul class="text-sm text-gray-700 list-disc pl-5 space-y-1">
-                <li>Pelatihan Teknisi atau Vokasi</li>
-                <li>Workshop Kewirausahaan</li>
-                <li>Kursus Analisis Data Dasar</li>
+                <li>Cari pelatihan atau sertifikasi yang berkaitan dengan pilihan pekerjaan yang Anda minati.</li>
+                <li>Tingkatkan keterampilan praktis melalui proyek nyata atau magang.</li>
+                <li>Perluas jaringan (networking) di bidang yang sesuai dengan profil RIASEC Anda.</li>
               </ul>
             </div>
           </div>
@@ -206,6 +236,27 @@ const getDimensionColor = (dim) => {
     'C': 'bg-gray-700'
   };
   return colors[dim] || 'bg-gray-500';
+};
+
+const getInterpretasiSingkat = (rankedProfile) => {
+  if (!rankedProfile || rankedProfile.length === 0) return '';
+  const top3 = rankedProfile.slice(0, 3);
+  const descs = top3.map(p => p.detail?.deskripsi || '').filter(Boolean);
+  return descs.join(' Selain itu, ');
+};
+
+const getCombinedJobs = (rankedProfile) => {
+  if (!rankedProfile || rankedProfile.length === 0) return '';
+  const top3 = rankedProfile.slice(0, 3);
+  const jobs = top3.map(p => p.detail?.contohPekerjaan || '').filter(Boolean);
+  return jobs.join(', ');
+};
+
+const getCombinedSkills = (rankedProfile) => {
+  if (!rankedProfile || rankedProfile.length === 0) return '';
+  const top3 = rankedProfile.slice(0, 3);
+  const skills = top3.map(p => p.detail?.keterampilanKunci || '').filter(Boolean);
+  return skills.join(' | ');
 };
 
 onMounted(async () => {
