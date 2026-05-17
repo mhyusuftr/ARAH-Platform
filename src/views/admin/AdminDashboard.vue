@@ -271,9 +271,59 @@
             </div>
           </div>
 
+          <!-- Rekomendasi Pekerjaan -->
+          <div v-if="detailData?.ranked_profile?.length">
+            <h3 class="text-lg font-bold text-gray-900 mb-3 flex items-center">
+              <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              Rekomendasi Pekerjaan
+            </h3>
+            <div class="space-y-3">
+              <div v-for="profile in detailData.ranked_profile.slice(0, 3)" :key="'job-'+profile.dimension" class="bg-green-50 rounded-xl p-4 border border-green-100">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="px-2.5 py-1 text-xs font-bold rounded-lg text-white" :class="getDimensionBgColor(profile.dimension)">{{ profile.dimension }}</span>
+                  <span class="text-sm font-semibold text-gray-800">{{ dimensionNames[profile.dimension] }}</span>
+                  <span class="text-xs text-gray-500">({{ profile.score }}%)</span>
+                </div>
+                <p v-if="profile.detail?.contohPekerjaan" class="text-sm text-gray-700 leading-relaxed">{{ profile.detail.contohPekerjaan }}</p>
+                <p v-else class="text-sm text-gray-400 italic">Tidak ada data rekomendasi pekerjaan</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rekomendasi Kegiatan / Pengembangan -->
+          <div v-if="detailData?.ranked_profile?.length">
+            <h3 class="text-lg font-bold text-gray-900 mb-3 flex items-center">
+              <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+              Rekomendasi Kegiatan & Pengembangan
+            </h3>
+            <div class="space-y-3">
+              <div v-for="profile in detailData.ranked_profile.slice(0, 3)" :key="'act-'+profile.dimension" class="bg-purple-50 rounded-xl p-4 border border-purple-100">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="px-2.5 py-1 text-xs font-bold rounded-lg text-white" :class="getDimensionBgColor(profile.dimension)">{{ profile.dimension }}</span>
+                  <span class="text-sm font-semibold text-gray-800">{{ dimensionNames[profile.dimension] }}</span>
+                  <span class="text-xs text-gray-500">({{ profile.score }}%)</span>
+                </div>
+                <div v-if="profile.detail" class="space-y-2">
+                  <div>
+                    <p class="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Deskripsi</p>
+                    <p class="text-sm text-gray-700 leading-relaxed">{{ profile.detail.deskripsi }}</p>
+                  </div>
+                  <div>
+                    <p class="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Keterampilan Kunci</p>
+                    <p class="text-sm text-gray-700 leading-relaxed">{{ profile.detail.keterampilanKunci }}</p>
+                  </div>
+                </div>
+                <p v-else class="text-sm text-gray-400 italic">Tidak ada data rekomendasi kegiatan</p>
+              </div>
+            </div>
+          </div>
+
           <!-- Validasi -->
           <div v-if="detailData?.persepsi_sesuai">
-            <h3 class="text-lg font-bold text-gray-900 mb-3">Hasil Validasi</h3>
+            <h3 class="text-lg font-bold text-gray-900 mb-3 flex items-center">
+              <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              Hasil Validasi
+            </h3>
             <div class="grid grid-cols-2 gap-3 text-sm bg-gray-50 rounded-xl p-4">
               <div><span class="text-gray-500">Persepsi Sesuai:</span> <span class="font-bold text-blue-700">{{ detailData.persepsi_sesuai }}</span></div>
               <div><span class="text-gray-500">Persepsi Tidak Sesuai:</span> <span class="font-bold text-red-600">{{ detailData.persepsi_tidak_sesuai }}</span></div>
@@ -351,6 +401,27 @@ const getCategoryClass = (cat) => {
   return 'bg-gray-100 text-gray-600';
 };
 
+const dimensionNames = {
+  'R': 'Realistic',
+  'I': 'Investigative',
+  'A': 'Artistic',
+  'S': 'Social',
+  'E': 'Enterprising',
+  'C': 'Conventional'
+};
+
+const getDimensionBgColor = (dim) => {
+  const colors = {
+    'R': 'bg-blue-500',
+    'I': 'bg-green-500',
+    'A': 'bg-purple-500',
+    'S': 'bg-yellow-500',
+    'E': 'bg-red-500',
+    'C': 'bg-gray-700'
+  };
+  return colors[dim] || 'bg-gray-500';
+};
+
 const showDetail = async (client) => {
   selectedClient.value = client;
   detailData.value = null;
@@ -371,6 +442,7 @@ const showDetail = async (client) => {
       categories: d.categories || {},
       top3: d.top3 || [],
       bottom3: d.bottom3 || [],
+      ranked_profile: d.ranked_profile || [],
       persepsi_sesuai: d.persepsi_sesuai,
       persepsi_tidak_sesuai: d.persepsi_tidak_sesuai,
       pekerjaan_disenangi: d.pekerjaan_disenangi || [],
